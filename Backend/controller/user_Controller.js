@@ -3,12 +3,12 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import usermodel from "../models/usermodel.js";
 
-// Login User
+// Login User using phone number and password
 const loginUser = async (req, res) => {
-  const { user_Email, user_Password } = req.body; // Updated field names
+  const { user_Phone, user_Password } = req.body; // Using phone number and password for login
   try {
     // Check if user exists
-    const user = await usermodel.findOne({ user_Email });
+    const user = await usermodel.findOne({ user_Phone });
     if (!user) {
       return res.json({ success: false, message: "User not found" });
     }
@@ -30,7 +30,10 @@ const loginUser = async (req, res) => {
 
 // Helper function to create a token
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" }); // Added expiration for security
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" }); // Token valid for 1 day
 };
 
 // Register User
