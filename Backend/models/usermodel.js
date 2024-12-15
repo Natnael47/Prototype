@@ -6,6 +6,11 @@ const userSchema = new mongoose.Schema(
     user_Email: { type: String, required: true, unique: true },
     user_Password: { type: String, required: true },
     user_Phone: { type: Number, required: true, unique: true },
+    user_Term: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     User_Lottery_Number: { type: Object, default: {} },
   },
   { minimize: false }
