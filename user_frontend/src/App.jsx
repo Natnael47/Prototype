@@ -1,8 +1,13 @@
 import React from 'react'
+import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
   return (
-    <div className='text-2xl text-yellow-400'>App</div>
+    <div className='mx-4 sm:mx-[10%]'>
+      <Routes>
+        <Route path='/' element={<login />} />
+      </Routes>
+    </div>
   )
 }
 
