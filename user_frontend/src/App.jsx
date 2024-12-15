@@ -1,15 +1,26 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import { Context } from './context/context'
+import Home from './pages/home'
 import Login from './pages/login'
 
 const App = () => {
-  return (
+
+  const { token } = useContext(Context);
+
+  return token ? (
     <div className='mx-4 sm:mx-[10%]'>
-      <Login />
+      <ToastContainer />
       <Routes>
-        <Route path='/' element={<Login />} />
+        <Route path='/' element={<Home />} />
       </Routes>
     </div>
+  ) : (
+    <>
+      <Login />
+      <ToastContainer />
+    </>
   )
 }
 

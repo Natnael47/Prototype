@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Context } from "../context/context";
 
 const Login = () => {
     const [currState, setCurrState] = useState("Login"); // Tracks current form state: Login or Sign Up
@@ -11,6 +12,8 @@ const Login = () => {
     });
 
     const [message, setMessage] = useState("");
+
+    const { setToken } = useContext(Context);
 
     // Handles input changes
     const onChangeHandler = (event) => {
@@ -32,10 +35,9 @@ const Login = () => {
             const response = await axios.post(apiUrl, data);
 
             if (response.data.success) {
+                setToken(response.data.token);
+                localStorage.setItem('token', response.data.token);
                 setMessage(`${currState} successful!`);
-                if (currState === "Login") {
-                    localStorage.setItem("token", response.data.token); // Store token for login
-                }
             } else {
                 setMessage(response.data.message);
             }
@@ -76,25 +78,27 @@ const Login = () => {
                     </div>
                 )}
 
-                {/* Email field */}
-                <div className="mb-4">
-                    <label
-                        htmlFor="user_Email"
-                        className="block text-sm font-medium text-gray-600"
-                    >
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        name="user_Email"
-                        id="user_Email"
-                        value={data.user_Email}
-                        onChange={onChangeHandler}
-                        placeholder="Enter your email"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        required
-                    />
-                </div>
+                {/* Email field only visible in Sign Up mode */}
+                {currState === "Sign Up" && (
+                    <div className="mb-4">
+                        <label
+                            htmlFor="user_Email"
+                            className="block text-sm font-medium text-gray-600"
+                        >
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            name="user_Email"
+                            id="user_Email"
+                            value={data.user_Email}
+                            onChange={onChangeHandler}
+                            placeholder="Enter your email"
+                            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                            required
+                        />
+                    </div>
+                )}
 
                 {/* Phone field */}
                 <div className="mb-4">
