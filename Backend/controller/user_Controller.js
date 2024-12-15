@@ -21,6 +21,7 @@ const loginUser = async (req, res) => {
 
     // Generate token
     const token = createToken(user._id);
+
     res.json({ success: true, token });
   } catch (error) {
     console.error(error);
@@ -34,6 +35,52 @@ const createToken = (id) => {
     throw new Error("JWT_SECRET is not defined");
   }
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" }); // Token valid for 1 day
+};
+
+// Fetch User Term Status (True or False)
+const checkUserTerm = async (req, res) => {
+  try {
+    const { userId } = req.body; // Get user ID from request body
+    const user = await usermodel.findById(userId); // Find user by ID
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    // Check the user's term acceptance status as a boolean
+    const userTermStatus = user.user_Term; // Directly return the boolean value
+    return res.json({ success: true, userTermStatus, Id: userId });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Error fetching user term status" });
+  }
+};
+
+// Update User Term Status
+const updateUserTerm = async (req, res) => {
+  const { userId, user_Term } = req.body;
+  try {
+    // Validate the user_Term field
+    if (typeof user_Term !== "boolean") {
+      return res.json({
+        success: false,
+        message: "user_Term should be a boolean value",
+      });
+    }
+
+    const user = await usermodel.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    // Update the user's term acceptance status
+    user.user_Term = user_Term ? "true" : "false"; // Save as 'true' or 'false'
+    await user.save();
+
+    res.json({ success: true, message: "Terms updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Error updating terms" });
+  }
 };
 
 // Register User
@@ -94,4 +141,4 @@ const registerUser = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser };
+export { checkUserTerm, loginUser, registerUser, updateUserTerm };
