@@ -85,8 +85,21 @@ const Home = () => {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        window.location.reload(); // Refresh to remove token and re-render the page
+    };
+
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 p-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-indigo-300 to-blue-500 p-6">
+            {/* Logout Button */}
+            <button
+                onClick={handleLogout}
+                className="absolute top-6 right-6 px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-lg hover:bg-red-600 transition duration-300"
+            >
+                Logout
+            </button>
+
             {userTermStatus === null ? (
                 <div className="text-center text-lg font-semibold text-gray-700">Loading...</div>
             ) : (
@@ -95,34 +108,34 @@ const Home = () => {
                         <>
                             <button
                                 onClick={handlePay}
-                                className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:bg-blue-600 transition duration-300"
+                                className="px-8 py-4 bg-blue-600 text-white font-bold rounded-lg shadow-xl hover:bg-blue-700 transition duration-300"
                             >
                                 Make Payment
                             </button>
                             {lotteryNumber && (
                                 <div className="mt-6 text-center">
-                                    <h3 className="text-2xl font-semibold text-gray-800">
-                                        Your Lottery Number: <span className="text-blue-600">{lotteryNumber}</span>
+                                    <h3 className="text-3xl font-semibold text-white">
+                                        Your Lottery Number: <span className="text-yellow-300">{lotteryNumber}</span>
                                     </h3>
                                     <button
                                         onClick={handleCheckWinner}
-                                        className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-lg hover:bg-green-600 transition duration-300"
+                                        className="mt-4 px-8 py-4 bg-green-600 text-white font-bold rounded-lg shadow-xl hover:bg-green-700 transition duration-300"
                                     >
                                         Check Winner
                                     </button>
                                 </div>
                             )}
                             {winnerDetails && (
-                                <div className="mt-8 text-center bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-lg shadow-md">
-                                    <h3 className="text-2xl font-bold text-yellow-700">🎉 Congratulations! 🎉</h3>
-                                    <p className="mt-2 text-lg text-gray-800">Winner Name: {winnerDetails.name}</p>
-                                    <p className="text-lg text-gray-800">Phone: {winnerDetails.phone}</p>
-                                    <p className="text-lg text-gray-800">Winning Lottery Number: {winnerDetails.lotteryNumber}</p>
+                                <div className="mt-8 text-center bg-yellow-200 border-l-4 border-yellow-500 p-6 rounded-lg shadow-xl">
+                                    <h3 className="text-3xl font-bold text-yellow-700">🎉 Congratulations! 🎉</h3>
+                                    <p className="mt-4 text-xl text-gray-800">Winner Name: <span className="font-semibold">{winnerDetails.name}</span></p>
+                                    <p className="text-xl text-gray-800">Phone: <span className="font-semibold">{winnerDetails.phone}</span></p>
+                                    <p className="text-xl text-gray-800">Winning Lottery Number: <span className="font-semibold">{winnerDetails.lotteryNumber}</span></p>
                                 </div>
                             )}
                         </>
                     ) : (
-                        <div className="text-center text-gray-700 text-lg">
+                        <div className="text-center text-white text-lg">
                             Please accept the terms and conditions to continue.
                         </div>
                     )}
@@ -135,18 +148,16 @@ const Home = () => {
                                     By proceeding, you agree to the following:
                                 </p>
                                 <p className="text-gray-700 mb-4">
-                                    1. You will send a fee of 1 Birr every time you make a transaction to
-                                    enter the lottery.
+                                    1. You will send a fee of 1 Birr every time you make a transaction to enter the lottery.
                                 </p>
                                 <p className="text-gray-700 mb-4">
-                                    2. You understand that this lottery awards a grand prize of 100,000
-                                    Birr every week.
+                                    2. You understand that this lottery awards a grand prize of 100,000 Birr every week.
                                 </p>
                                 <p className="text-gray-700 mb-4">
                                     3. All transactions are final and cannot be refunded once completed.
                                 </p>
                                 <button
-                                    className="block mx-auto mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                                    className="block mx-auto mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300"
                                     onClick={handleAcceptTerms}
                                 >
                                     Accept
