@@ -1,7 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Stripe from "stripe";
 import validator from "validator";
+import LotteryModel from "../models/lotteryNumbermodel.js";
 import usermodel from "../models/usermodel.js";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Login User using phone number and password
 const loginUser = async (req, res) => {
@@ -141,4 +145,91 @@ const registerUser = async (req, res) => {
   }
 };
 
-export { checkUserTerm, loginUser, registerUser, updateUserTerm };
+const payment = async (req, res) => {
+  const { userId } = req.body;
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+  try {
+    // Adjust the amount to meet Stripe's minimum (e.g., 300 ETB)
+    const amountInETB = 300; // Adjust as needed
+    const amountInCents = amountInETB * 100; // Convert ETB to cents
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountInCents,
+      currency: "ETB",
+      description: "Lottery ticket payment with subscription fee",
+    });
+
+    const generateLotteryNumber = () => {
+      return Math.floor(100000000000 + Math.random() * 900000000000).toString();
+    };
+
+    const lotteryNumber = generateLotteryNumber();
+
+    const lotteryEntry = new LotteryModel({
+      lottery_number: lotteryNumber,
+      user_id: userId,
+    });
+    await lotteryEntry.save();
+
+    res.json({
+      success: true,
+      message: "Payment successful. Lottery number generated.",
+      lottery_number: lotteryNumber,
+    });
+  } catch (error) {
+    console.error("Payment Error:", error);
+    res.status(500).json({ success: false, message: "Payment failed." });
+  }
+};
+
+export const selectLotteryWinner = async (req, res) => {
+  try {
+    // Find all lottery numbers where is_winner is false
+    const eligibleTickets = await LotteryModel.find({ is_winner: false });
+
+    if (eligibleTickets.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No eligible lottery tickets found.",
+      });
+    }
+
+    // Randomly select one ticket from the eligible ones
+    const randomIndex = Math.floor(Math.random() * eligibleTickets.length);
+    const selectedTicket = eligibleTickets[randomIndex];
+
+    // Retrieve the user details for the selected ticket
+    const user = await usermodel.findById(selectedTicket.user_id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User associated with the lottery ticket not found.",
+      });
+    }
+
+    // Update the is_winner field to true for the selected ticket
+    selectedTicket.is_winner = true;
+    await selectedTicket.save();
+
+    // Send the user's name, phone, and the winning lottery number to the frontend
+    res.json({
+      success: true,
+      message: "Winner selected successfully!",
+      winnerDetails: {
+        name: user.user_Name,
+        phone: user.user_Phone,
+        lotteryNumber: selectedTicket.lottery_number,
+      },
+    });
+  } catch (error) {
+    console.error("Error selecting lottery winner:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to select a lottery winner.",
+    });
+  }
+};
+
+export { checkUserTerm, loginUser, payment, registerUser, updateUserTerm };
