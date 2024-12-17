@@ -2,8 +2,8 @@ import React, { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { Context } from './context/context'
-import Home from './pages/home'
-import Login from './pages/login'
+import Home from './pages/Home'
+import Login from './pages/Login'
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
