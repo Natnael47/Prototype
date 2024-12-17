@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
+import { backendUrl } from "../App";
 import { Context } from "../context/context";
 
 const Login = () => {
@@ -28,8 +29,8 @@ const Login = () => {
 
         const apiUrl =
             currState === "Login"
-                ? "http://localhost:5000/api/user/login"
-                : "http://localhost:5000/api/user/register";
+                ? backendUrl + "/api/user/login"
+                : backendUrl + "/api/user/register";
 
         try {
             const response = await axios.post(apiUrl, data);

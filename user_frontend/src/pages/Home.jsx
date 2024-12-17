@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import { backendUrl } from "../App";
 import { Context } from "../context/context";
 
 const Home = () => {
@@ -12,7 +13,7 @@ const Home = () => {
     useEffect(() => {
         const checkUserTerms = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/user/check", {
+                const response = await axios.get(backendUrl + "/api/user/check", {
                     headers: { token },
                 });
 
@@ -35,7 +36,7 @@ const Home = () => {
     const handleAcceptTerms = async () => {
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/user/update-term",
+                backendUrl + "/api/user/update-term",
                 { user_Term: true },
                 { headers: { token } }
             );
@@ -52,7 +53,7 @@ const Home = () => {
     const handlePay = async () => {
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/user/payment",
+                backendUrl + "/api/user/payment",
                 {},
                 { headers: { token } }
             );
@@ -71,7 +72,7 @@ const Home = () => {
 
     const handleCheckWinner = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/api/user/select-winner");
+            const response = await axios.get(backendUrl + "/api/user/select-winner");
 
             if (response.data.success) {
                 const { name, phone, lotteryNumber } = response.data.winnerDetails;

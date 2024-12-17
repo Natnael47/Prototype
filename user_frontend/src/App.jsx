@@ -5,6 +5,8 @@ import { Context } from './context/context'
 import Home from './pages/home'
 import Login from './pages/login'
 
+export const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const App = () => {
 
   const { token } = useContext(Context);
