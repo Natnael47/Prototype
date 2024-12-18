@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { backendUrl } from "../App";
+import { assets } from "../assets/assets";
 import { Context } from "../context/context";
 
 const Home = () => {
@@ -100,6 +101,8 @@ const Home = () => {
             >
                 Logout
             </button>
+
+            <img src={assets.lucky} alt="" className="border rounded-md m-3 sm:size-28" />
 
             {userTermStatus === null ? (
                 <div className="text-center text-lg font-semibold text-gray-700">Loading...</div>
